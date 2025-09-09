@@ -1,0 +1,170 @@
+2025-09-08 14:01:16,072 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for data files: {'db.db'} (connection.py:316)
+2025-09-08 14:01:17,089 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:318)
+2025-09-08 14:01:17,134 - MainThread - sqlmesh.core.config.connection - INFO - Using existing DuckDB adapter due to overlapping data file: db.db (connection.py:306)
+2025-09-08 14:01:19,875 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema db.sqlmesh__sqlmesh_example (evaluator.py:323)
+2025-09-08 14:01:19,881 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: SELECT CURRENT_CATALOG() (base.py:2113)
+2025-09-08 14:01:19,882 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: SELECT CURRENT_CATALOG() (base.py:2113)
+2025-09-08 14:01:19,883 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: SELECT table_name AS name, table_schema AS schema, CASE table_type WHEN 'BASE TABLE' THEN 'table' WHEN 'VIEW' THEN 'view' WHEN 'LOCAL TEMPORARY' THEN 'table' END AS type FROM system.information_schema.tables WHERE (table_catalog = 'db' AND table_schema = 'sqlmesh__sqlmesh_example') AND table_name IN ('sqlmesh_example__incremental_model__1880815781', 'sqlmesh_example__full_model__2278521865', 'sqlmesh_example__raw_covid_data__1629469154', 'sqlmesh_example__seed_model__2185867172', 'sqlmesh_example__covid_analysis__362037577') (base.py:2113)
+2025-09-08 14:01:19,917 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'db.sqlmesh__sqlmesh_example' (evaluator.py:1068)
+2025-09-08 14:01:19,917 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE SCHEMA IF NOT EXISTS "db"."sqlmesh__sqlmesh_example" (base.py:2113)
+2025-09-08 14:01:19,923 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Creating table 'db.sqlmesh__sqlmesh_example.sqlmesh_example__raw_covid_data__1629469154' (evaluator.py:1420)
+2025-09-08 14:01:19,923 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE TABLE IF NOT EXISTS "db"."sqlmesh__sqlmesh_example"."sqlmesh_example__raw_covid_data__1629469154" AS SELECT "country" AS "iso_code", "country" AS "location", "date" AS "date", "new_cases" AS "new_cases", "new_cases_per_million" AS "new_cases_per_million", "new_deaths" AS "new_deaths", "new_deaths_per_million" AS "new_deaths_per_million", "people_vaccinated" AS "people_vaccinated", "people_fully_vaccinated" AS "people_fully_vaccinated", "total_boosters" AS "total_boosters" FROM READ_CSV_AUTO('Data/OWID_COVID19_DATA.csv') AS "_q_0" WHERE FALSE LIMIT 0 (base.py:2113)
+2025-09-08 14:01:20,190 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Creating table 'db.sqlmesh__sqlmesh_example.sqlmesh_example__covid_analysis__362037577' (evaluator.py:1420)
+2025-09-08 14:01:20,191 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE TABLE IF NOT EXISTS "db"."sqlmesh__sqlmesh_example"."sqlmesh_example__covid_analysis__362037577" AS SELECT "raw_covid_data"."location" AS "location", "raw_covid_data"."date" AS "date", ROUND(AVG("raw_covid_data"."new_cases_per_million"), 2) AS "avg_inzidenz", ROUND(AVG("raw_covid_data"."new_deaths_per_million"), 2) AS "avg_todesrate", MAX("raw_covid_data"."people_fully_vaccinated") AS "max_vaccinated" FROM "db"."sqlmesh__sqlmesh_example"."sqlmesh_example__raw_covid_data__1629469154" AS "raw_covid_data" WHERE "raw_covid_data"."date" >= '2020-01-01' AND FALSE GROUP BY "raw_covid_data"."location", "raw_covid_data"."date" ORDER BY "date" LIMIT 0 (base.py:2113)
+2025-09-08 14:01:20,228 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"db"."sqlmesh_example"."raw_covid_data": 592751086> (evaluator.py:595)
+2025-09-08 14:01:20,232 - MainThread - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2025-09-07 00:00:00, 2025-09-08 00:00:00) into db.sqlmesh__sqlmesh_example.sqlmesh_example__raw_covid_data__1629469154' (evaluator.py:649)
+2025-09-08 14:01:20,232 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: DESCRIBE "db"."sqlmesh__sqlmesh_example"."sqlmesh_example__raw_covid_data__1629469154" (base.py:2113)
+2025-09-08 14:01:20,235 - MainThread - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: CREATE OR REPLACE TABLE "db"."sqlmesh__sqlmesh_example"."sqlmesh_example__raw_covid_data__1629469154" AS SELECT CAST("iso_code" AS TEXT) AS "iso_code", CAST("location" AS TEXT) AS "location", CAST("date" AS DATE) AS "date", CAST("new_cases" AS BIGINT) AS "new_cases", CAST("new_cases_per_million" AS DOUBLE) AS "new_cases_per_million", CAST("new_deaths" AS BIGINT) AS "new_deaths", CAST("new_deaths_per_million" AS DOUBLE) AS "new_deaths_per_million", CAST("people_vaccinated" AS DOUBLE) AS "people_vaccinated", CAST("people_fully_vaccinated" AS DOUBLE) AS "people_fully_vaccinated", CAST("total_boosters" AS BIGINT) AS "total_boosters" FROM (SELECT "country" AS "iso_code", "country" AS "location", "date" AS "date", "new_cases" AS "new_cases", "new_cases_per_million" AS "new_cases_per_million", "new_deaths" AS "new_deaths", "new_deaths_per_million" AS "new_deaths_per_million", "people_vaccinated" AS "people_vaccinated", "people_fully_vaccinated" AS "people_fully_vaccinated", "total_boosters" AS "total_boosters" FROM READ_CSV_AUTO('Data/OWID_COVID19_DATA.csv') AS "_q_0") AS "_subquery" (base.py:2113)
+2025-09-08 14:01:20,812 - MainThread - sqlmesh.core.scheduler - INFO - SKIPPED snapshot "db"."sqlmesh_example"."covid_analysis"
+ (scheduler.py:337)
+2025-09-08 14:01:20,812 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node ('"db"."sqlmesh_example"."raw_covid_data"', ((1757203200000, 1757289600000), 0)) (scheduler.py:342)
+Traceback (most recent call last):
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\utils\concurrency.py", line 227, in sequential_apply_to_dag
+    fn(node)
+    ~~^^^^^^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\scheduler.py", line 469, in evaluate_node
+    self.evaluate(
+    ~~~~~~~~~~~~~^
+        snapshot=snapshot,
+        ^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        batch_index=batch_idx,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\scheduler.py", line 188, in evaluate
+    wap_id = self.snapshot_evaluator.evaluate(
+        snapshot,
+    ...<6 lines>...
+        **kwargs,
+    )
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\snapshot\evaluator.py", line 150, in evaluate
+    result = self._evaluate_snapshot(
+        snapshot,
+    ...<6 lines>...
+        **kwargs,
+    )
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\snapshot\evaluator.py", line 742, in _evaluate_snapshot
+    apply(query_or_df, index)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\snapshot\evaluator.py", line 655, in apply
+    evaluation_strategy.insert(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        table_name=table_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+        physical_properties=rendered_physical_properties,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\snapshot\evaluator.py", line 1601, in insert
+    self._replace_query_for_model(model, table_name, query_or_df, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\snapshot\evaluator.py", line 1281, in _replace_query_for_model
+    self.adapter.replace_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name,
+        ^^^^^
+    ...<9 lines>...
+        columns_to_types=columns_to_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\engine_adapter\shared.py", line 302, in internal_wrapper
+    return func(*list_args, **kwargs)
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\engine_adapter\base.py", line 365, in replace_query
+    return self._create_table_from_source_queries(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        target_table,
+        ^^^^^^^^^^^^^
+    ...<5 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\engine_adapter\base.py", line 762, in _create_table_from_source_queries
+    self._create_table(
+    ~~~~~~~~~~~~~~~~~~^
+        schema if schema else table,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\engine_adapter\base.py", line 800, in _create_table
+    self.execute(
+    ~~~~~~~~~~~~^
+        self._build_create_table_exp(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<12 lines>...
+        )
+        ^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\engine_adapter\base.py", line 2110, in execute
+    self._execute(sql, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\engine_adapter\base.py", line 2116, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+duckdb.duckdb.ConversionException: Conversion Error: CSV Error on Line: 515505
+Original Line: 
+World excl. China, South Korea, Japan and Singapore,2020-04-10,1362835,68661,74667.29,214.5912,10.811321,11.757067,96458,5695,6600.7144,15.18822,0.8967314,1.0393447,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Error when converting column "date". Could not convert string " South Korea" to 'DATE'
+
+Column date is being converted as type DATE
+This type was auto-detected from the CSV file.
+Possible solutions:
+* Override the type for this column manually by setting the type explicitly, e.g. types={'date': 'VARCHAR'}
+* Set the sample size to a larger value to enable the auto-detection to scan more values, e.g. sample_size=-1
+* Use a COPY statement to automatically derive types from an existing table.
+* Check whether the null string value is set correctly (e.g., nullstr = 'N/A')
+
+  file = Data/OWID_COVID19_DATA.csv
+  delimiter = , (Auto-Detected)
+  quote = \0 (Auto-Detected)
+  escape = \0 (Auto-Detected)
+  new_line = \r\n (Auto-Detected)
+  header = true (Auto-Detected)
+  skip_rows = 0 (Auto-Detected)
+  comment = \0 (Auto-Detected)
+  strict_mode = true (Auto-Detected)
+  date_format =  (Auto-Detected)
+  timestamp_format =  (Auto-Detected)
+  null_padding = 0
+  sample_size = 20480
+  ignore_errors = false
+  all_varchar = 0
+
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node ('"db"."sqlmesh_example"."raw_covid_data"', ((1757203200000, 1757289600000), 0))
+2025-09-08 14:01:20,840 - MainThread - sqlmesh.core.context - INFO - Plan application failed. (context.py:1459)
+Traceback (most recent call last):
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\context.py", line 1451, in apply
+    self._apply(plan, circuit_breaker)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\context.py", line 2046, in _apply
+    self._scheduler.create_plan_evaluator(self).evaluate(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        plan.to_evaluatable(), circuit_breaker=circuit_breaker
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\plan\evaluator.py", line 139, in evaluate
+    self._backfill(
+    ~~~~~~~~~~~~~~^
+        plan,
+        ^^^^^
+    ...<3 lines>...
+        circuit_breaker=circuit_breaker,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\h.boulaayad\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlmesh\core\plan\evaluator.py", line 233, in _backfill
+    raise PlanError("Plan application failed.")
+sqlmesh.utils.errors.PlanError: Plan application failed.
+2025-09-08 14:01:20,865 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)
