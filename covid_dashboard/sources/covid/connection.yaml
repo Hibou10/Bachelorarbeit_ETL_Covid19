@@ -1,9 +1,0 @@
-
-name: covid
-type: duckdb
-options:
-  filename: db.db
-
-
-
-

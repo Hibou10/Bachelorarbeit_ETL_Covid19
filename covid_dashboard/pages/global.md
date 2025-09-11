@@ -2,37 +2,99 @@
 title: Global COVID-19 Dashboard
 ---
 
-<Details title='Hinweis'>
-  Dieses Dashboard zeigt COVID-19 Kennzahlen (Infektionszahlen, Inzidenz, Todesfälle, Impfungen).  
-  Mit den Dropdowns kannst du Jahr und Metrik auswählen.
-</Details>
-
-```sql years
-select distinct cast(extract(year from date) as int) as year
-from covid1
-order by year
-```
-<Dropdown data={years} name=year value=year> <DropdownOption value=2020/> <DropdownOption value=2021/> <DropdownOption value=2022/> <DropdownOption value=2023/> </Dropdown> <Dropdown name=metric> <DropdownOption value="total_cases" valueLabel="Infektionszahlen"/> <DropdownOption value="avg_inzidenz" valueLabel="Inzidenz"/> <DropdownOption value="total_deaths" valueLabel="Todesfälle"/> <DropdownOption value="max_vaccinated" valueLabel="Impfquote"/> </Dropdown>
-
-
-```sql top_countries
-select 
-    location,
-    sum(total_cases) as total_cases,
-    round(avg(avg_inzidenz),2) as avg_inzidenz,
-    sum(total_deaths) as total_deaths,
-    max(max_vaccinated) as max_vaccinated
-from covid1
-where extract(year from date) = ${inputs.year.value}
-group by location
-order by
-  case '${inputs.metric.value}'
-    when 'total_cases' then sum(total_cases)
-    when 'avg_inzidenz' then avg(avg_inzidenz)
-    when 'total_deaths' then sum(total_deaths)
-    when 'max_vaccinated' then max(max_vaccinated)
-  end desc
-limit 10
+```sql countries
+select distinct country from cvd.covid order by country
 ```
 
-<BarChart data={top_countries} title="Top 10 Länder – {inputs.metric.label} ({inputs.year.value})" x=location y={inputs.metric.value} />
+
+<Dropdown name=year>
+  <DropdownOption value=% valueLabel="All Years"/>
+  <DropdownOption value=2020 />
+  <DropdownOption value=2021 />
+  <DropdownOption value=2022 />
+  <DropdownOption value=2023 />
+  <DropdownOption value=2024 />
+  <DropdownOption value=2025 />
+</Dropdown>
+
+<Dropdown data={countries} name=country value=country /> 
+<Dropdown name=metric>
+  <DropdownOption value="infections" valueLabel="Infections"/> 
+  <DropdownOption value="incidence" valueLabel="Incidence"/>
+  <DropdownOption value="vaccinations" valueLabel="Vaccinations"/>
+  <DropdownOption value="deaths" valueLabel="Deaths"/> 
+</Dropdown>
+
+```sql covid_metrics
+  select
+    country,
+  year,
+    infections,
+    incidence,
+    vaccinations,
+    deaths
+  from cvd.covid
+  where
+    country = '${inputs.country.value}'
+  and (
+        '${inputs.year.value}' = '%'
+  or year = cast('${inputs.year.value}' as int)
+)
+```
+
+<BarChart 
+  data={covid_metrics} 
+  title="COVID-19 {inputs.metric.label} in {inputs.country.value} {inputs.year.label}" 
+  x=year 
+  y={inputs.metric.value} />
+
+
+```sql map_data
+select
+  case
+    when country = 'United States' then 'United States of America'
+    when country = 'Russia' then 'Russian Federation'
+    when country = 'South Korea' then 'Korea, Republic of'
+    else country
+  end as country,
+
+  -- Original Summen (falls du sie noch für Tabellen brauchst)
+  sum(infections) as infections,
+  sum(incidence) as incidence,
+  sum(vaccinations) as vaccinations,
+  sum(deaths) as deaths,
+
+  -- Highlight-Spalte: nur beim gewählten Land > 0
+  case 
+    when country = '${inputs.country.value}' then sum(
+      case 
+        when '${inputs.metric.value}' = 'infections' then infections
+        when '${inputs.metric.value}' = 'incidence' then incidence
+        when '${inputs.metric.value}' = 'vaccinations' then vaccinations
+        when '${inputs.metric.value}' = 'deaths' then deaths
+      end
+    )
+    else 0
+  end as highlight_value
+
+from cvd.covid
+where
+  ('${inputs.year.value}' = '%' OR year = cast('${inputs.year.value}' as int))
+group by
+  country
+
+
+```
+
+<AreaMap
+  data={map_data}
+  geoJsonUrl="https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
+  areaCol="country"
+  geoId="name"
+  value="highlight_value"
+  title={`COVID-19 ${inputs.metric.label} Map (${inputs.year.label})`}
+  colorScheme={["#ffffff", "#1f77b4"]}
+/>
+
+
+
