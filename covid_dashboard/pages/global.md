@@ -78,7 +78,7 @@ select
     else 0
   end as highlight_value,
 
-  '/country/' || country as link
+  '/country/' || country || '?metric=' || '${inputs.metric.value}' as link
 
 from cvd.covid
 where
@@ -90,12 +90,10 @@ group by country
 <AreaMap
   data={map_data}
   geoJsonUrl="https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
-  areaCol="country_db"
+  areaCol="country"
   geoId="name"
   value="highlight_value"
+  title={`COVID-19 ${inputs.metric.label} Map (${inputs.year.label})`}
   link=link
-  title="COVID-19 {inputs.metric.label} Map {inputs.year.label}"
   colorScheme={["#ffffff", "#1f77b4"]}
 />
-
-
