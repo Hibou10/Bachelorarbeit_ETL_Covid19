@@ -1,49 +1,5 @@
----
-title: Country Dashboard
----
 
 # {params.country_name} COVID-19 
-
-
-```sql country_data
-select
-  year,
-  infections,
-  incidence,
-  vaccinations,
-  deaths
-from cvd.covid
-where country = '${params.country_name}'
-order by year
-```
-
-
-<Grid columns=2>
-  <LineChart 
-    data={country_data} 
-    x="year" 
-    y="infections" 
-    title="Infections in {params.country_name} Yearly" />
-
-  <LineChart 
-    data={country_data} 
-    x="year" 
-    y="incidence" 
-    title="Incidence in {params.country_name} Yearly" />
-
-  <LineChart 
-    data={country_data} 
-    x="year" 
-    y="vaccinations" 
-    title="Vaccinations in {params.country_name} Yearly" />
-
-  <LineChart 
-    data={country_data} 
-    x="year" 
-    y="deaths" 
-    title="Deaths in {params.country_name} Yearly" />
-</Grid>
-
 
 ```sql country_summary
 with country_codes as (
@@ -257,7 +213,6 @@ from cvd.covid c
 join country_codes cc on c.country = cc.country
 where c.country = '${params.country_name}'
 group by c.country, cc.iso2
-
 ```
 
 <DataTable data={country_summary}>
@@ -270,5 +225,44 @@ group by c.country, cc.iso2
 </DataTable>
 
 
+
+```sql country_data
+select
+  year,
+  infections,
+  incidence,
+  vaccinations,
+  deaths
+from cvd.covid
+where country = '${params.country_name}'
+order by year
+```
+
+
+<Grid columns=2>
+  <LineChart 
+    data={country_data} 
+    x="year" 
+    y="infections" 
+    title="Infections in {params.country_name} yearly" />
+
+  <LineChart 
+    data={country_data} 
+    x="year" 
+    y="incidence" 
+    title="Incidence in {params.country_name} yearly" />
+
+  <LineChart 
+    data={country_data} 
+    x="year" 
+    y="vaccinations" 
+    title="Vaccinations in {params.country_name} yearly" />
+
+  <LineChart 
+    data={country_data} 
+    x="year" 
+    y="deaths" 
+    title="Deaths in {params.country_name} Yearly" />
+</Grid>
 
 
