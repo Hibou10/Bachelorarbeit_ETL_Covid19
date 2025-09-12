@@ -56,15 +56,16 @@ select
     when country = 'Russia' then 'Russian Federation'
     when country = 'South Korea' then 'Korea, Republic of'
     else country
-  end as country,
+  end as country,   
 
-  -- Original Summen (falls du sie noch für Tabellen brauchst)
+  country as country_db,    -- Original DB-Name
+
   sum(infections) as infections,
   sum(incidence) as incidence,
   sum(vaccinations) as vaccinations,
   sum(deaths) as deaths,
 
-  -- Highlight-Spalte: nur beim gewählten Land > 0
+   -- Highlight-Spalte: nur beim gewählten Land > 0
   case 
     when country = '${inputs.country.value}' then sum(
       case 
@@ -75,26 +76,26 @@ select
       end
     )
     else 0
-  end as highlight_value
+  end as highlight_value,
+
+  '/country/' || country as link
 
 from cvd.covid
 where
-  ('${inputs.year.value}' = '%' OR year = cast('${inputs.year.value}' as int))
-group by
-  country
-
+  ('${inputs.year.value}' = '%' or year = cast('${inputs.year.value}' as int))
+group by country
 
 ```
 
 <AreaMap
   data={map_data}
   geoJsonUrl="https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
-  areaCol="country"
+  areaCol="country_db"
   geoId="name"
   value="highlight_value"
-  title={`COVID-19 ${inputs.metric.label} Map (${inputs.year.label})`}
+  link=link
+  title="COVID-19 {inputs.metric.label} Map {inputs.year.label}"
   colorScheme={["#ffffff", "#1f77b4"]}
 />
-
 
 
