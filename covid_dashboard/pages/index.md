@@ -1,6 +1,16 @@
 ---
-title: Global COVID-19 Dashboard
+title: Global COVID-19 
 ---
+
+COVID-19 has affected every country worldwide, with millions of infections, hospitalizations, and deaths reported since 2020.  
+This dashboard provides a clear overview of the pandemic’s impact by country and year.  
+
+
+- **Infections** → Reported cases  
+- **Incidence** → Cases per 100k people  
+- **Vaccinations** → Doses administered  
+- **Deaths** → Reported deaths 
+
 
 ```sql countries
 select distinct country from cvd.covid order by country
@@ -48,6 +58,8 @@ select distinct country from cvd.covid order by country
   x=year 
   y={inputs.metric.value} />
 
+ 
+Select a country to see more detail
 
 ```sql map_data
 select
@@ -87,13 +99,21 @@ group by country
 
 ```
 
+
 <AreaMap
   data={map_data}
   geoJsonUrl="https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
   areaCol="country"
   geoId="name"
   value="highlight_value"
-  title={`COVID-19 ${inputs.metric.label} Map (${inputs.year.label})`}
+  title="COVID-19 {inputs.metric.label} Map"
   link=link
   colorScheme={["#ffffff", "#1f77b4"]}
+  borders={true}
+  borderColor="#333333"
+  borderWidth=0.5
+  tooltip={[
+    { id: "country", showColumnName: false, title: "Country" },
+    { id: inputs.metric.value, title: inputs.metric.label, fmt: "0,0" }
+  ]}
 />

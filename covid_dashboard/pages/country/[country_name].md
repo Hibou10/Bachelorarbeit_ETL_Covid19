@@ -1,5 +1,5 @@
 
-# {params.country_name} COVID-19 
+#  Total Metrics for {params.country_name}
 
 ```sql country_summary
 with country_codes as (
@@ -70,6 +70,7 @@ with country_codes as (
     ('Germany','de'),
     ('Ghana','gh'),
     ('Greece','gr'),
+    ('Greenland','gl'),
     ('Grenada','gd'),
     ('Guatemala','gt'),
     ('Guinea','gn'),
@@ -264,5 +265,3 @@ order by year
     y="deaths" 
     title="Deaths in {params.country_name} Yearly" />
 </Grid>
-
-
