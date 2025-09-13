@@ -1,4 +1,3 @@
-
 #  Total Metrics for {params.country_name}
 
 ```sql country_summary

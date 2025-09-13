@@ -54,12 +54,11 @@ select distinct country from cvd.covid order by country
 
 <BarChart 
   data={covid_metrics} 
-  title="COVID-19 {inputs.metric.label} in {inputs.country.value} {inputs.year.label}" 
+  title="COVID-19 {inputs.metric.label} in {inputs.country.value}" 
   x=year 
   y={inputs.metric.value} />
-
  
-Select a country to see more detail
+
 
 ```sql map_data
 select
@@ -70,7 +69,7 @@ select
     else country
   end as country,   
 
-  country as country_db,    -- Original DB-Name
+  country as country_db,    
 
   sum(infections) as infections,
   sum(incidence) as incidence,
@@ -96,9 +95,7 @@ from cvd.covid
 where
   ('${inputs.year.value}' = '%' or year = cast('${inputs.year.value}' as int))
 group by country
-
 ```
-
 
 <AreaMap
   data={map_data}
@@ -106,7 +103,7 @@ group by country
   areaCol="country"
   geoId="name"
   value="highlight_value"
-  title="COVID-19 {inputs.metric.label} Map"
+  title="COVID-19 Map"
   link=link
   colorScheme={["#ffffff", "#1f77b4"]}
   borders={true}
@@ -116,4 +113,6 @@ group by country
     { id: "country", showColumnName: false, title: "Country" },
     { id: inputs.metric.value, title: inputs.metric.label, fmt: "0,0" }
   ]}
-/>
+  height=200
+  />
+
