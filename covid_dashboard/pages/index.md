@@ -96,6 +96,7 @@ where
   ('${inputs.year.value}' = '%' or year = cast('${inputs.year.value}' as int))
 group by country
 ```
+Select a country to see more detail
 
 <AreaMap
   data={map_data}

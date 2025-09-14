@@ -262,5 +262,5 @@ order by year
     data={country_data} 
     x="year" 
     y="deaths" 
-    title="Deaths in {params.country_name} Yearly" />
+    title="Deaths in {params.country_name} yearly" />
 </Grid>
